@@ -27,7 +27,7 @@
 ##          ] }
 ##END-CONF
 
-import re, os, time
+import re, os, time, cPickle
 import urllib2
 from random import randint
 from pumpkin import PmkSeed
@@ -39,6 +39,7 @@ class language_filter(PmkSeed.Seed):
     def __init__(self, context, poi=None):
         PmkSeed.Seed.__init__(self, context,poi)
         self.wd = self.context.getWorkingDir()
+        self.cache = []
 
     def on_load(self):
         print "Loading: " + self.__class__.__name__
@@ -59,7 +60,14 @@ class language_filter(PmkSeed.Seed):
 
         return result[0]
 
+    def process_message(self, pkt, message, category):
+        self.cache.append(message)
+        if len(self.cache) > 10:
+            self.dispatch(pkt, cPickle.dumps(self.cache), category)
+            self.cache = []
+
     def run(self, pkt, tweet):
+        tweet = cPickle.loads(tweet)
         for t in tweet:
             m = re.search('W(\s+)(.*)(\n)', t, re.S)
             if m:
@@ -67,5 +75,5 @@ class language_filter(PmkSeed.Seed):
                 if len(tw) > 10:
                     language = self.detect_language(tw)
                     if language == 'english':
-                        self.dispatch(pkt, t, 'ENGLISH')
+                        self.process_message(pkt, t, 'ENGLISH')
 

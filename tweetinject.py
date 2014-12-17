@@ -24,11 +24,12 @@
 
 from os import listdir
 from os.path import isfile, join
-import pika
-import urllib2
+import pika, urllib2, cPickle
 
 from os.path import expanduser
 from pumpkin import *
+
+
 
 class tweetinject(PmkSeed.Seed):
 
@@ -36,6 +37,7 @@ class tweetinject(PmkSeed.Seed):
         PmkSeed.Seed.__init__(self, context,poi)
         self.connection = None
         self.channel = None
+        self.cache = []
 
     def get_net_file(self, url, file_name):
         #file_name = url.split('/')[-1]
@@ -55,15 +57,8 @@ class tweetinject(PmkSeed.Seed):
                     break
                 file_size_dl += len(buffer)
                 f.write(buffer)
-                #status = r"%10d  [%3.2f%%]" % (file_size_dl, file_size_dl * 100. / file_size)
-                #status = status + chr(8)*(len(status)+1)
-                #print status,
             f.close()
             downloaded = True
-            # except Exception as e:
-            #     self.logger.error("Error downloading, trying again....", e)
-            #     time.sleep(5)
-            #     pass
 
     def on_load(self):
         print "Loading: " + self.__class__.__name__
@@ -83,16 +78,11 @@ class tweetinject(PmkSeed.Seed):
         if not ok:
             self.get_net_file(url,output_file)
 
-
-        #self.connection, self.channel = self.__open_rabbitmq_channel()
-
-    # def __open_rabbitmq_channel(self):
-    #     host, port, username, password, vhost = self.context.get_rabbitmq_cred()
-    #     credentials = pika.PlainCredentials(username, password)
-    #     connection = pika.BlockingConnection(pika.ConnectionParameters(host=host,  credentials=credentials, virtual_host=vhost))
-    #     channel = connection.channel()
-    #     return (connection, channel)
-
+    def process_message(self, pkt, message, category):
+        self.cache.append(message)
+        if len(self.cache) > 10:
+            self.fork_dispatch(pkt, cPickle.dumps(self.cache), category)
+            self.cache = []
 
     def run(self, pkt):
         dir = expanduser("~")+"/tweets/"
@@ -112,12 +102,6 @@ class tweetinject(PmkSeed.Seed):
                                 line =""
                             else:
                                 tweet = tweet + line
-                                self.fork_dispatch(pkt, tweet, "RAW")
+                                self.process_message(pkt, tweet, "RAW")
                                 del line
                                 del tweet
-
-    # def publish(self, data, queue):
-    #     self.channel.basic_publish(exchange='',
-    #                           routing_key=queue,
-    #                           body=str(data))
-

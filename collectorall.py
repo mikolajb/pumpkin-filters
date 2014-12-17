@@ -22,11 +22,8 @@ __author__ = 'reggie'
 
 
 
-import re
-
-
+import re, cPickle
 from pumpkin import PmkSeed
-
 import json
 import re
 import networkx as nx
@@ -45,6 +42,7 @@ class collectorall(PmkSeed.Seed):
         self.stats = open("stats.txt", "w+")
 
     def run(self, pkt, tweet):
+        tweet = cPickle.loads(tweet)
         self.stats.write(strftime("%a, %d %b %Y %H:%M:%S +0000\n", gmtime()))
         self.stats.flush()
         for t in tweet:
