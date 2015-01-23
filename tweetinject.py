@@ -63,9 +63,9 @@ class tweetinject(PmkSeed.Seed):
     def on_load(self):
         print "Loading: " + self.__class__.__name__
         ok = False
-        url = "http://elab.lab.uvalight.net/gzs/tweets2009-06-brg.txt"
+        url = "http://elab.lab.uvalight.net/gzs/tweets2009-06.txt"
         dir = expanduser("~")+"/tweets/"
-        output_file = dir+"tweets2009-06-brg.txt"
+        output_file = dir+"tweets2009-06.txt"
         self._ensure_dir(dir)
         onlyfiles = [ f for f in listdir(dir) if isfile(join(dir,f)) ]
 

@@ -29,6 +29,7 @@
 
 import re, os, time, cPickle
 import urllib2
+import nltk
 from random import randint
 from pumpkin import PmkSeed
 from nltk import sent_tokenize, word_tokenize, pos_tag, ne_chunk
@@ -64,7 +65,7 @@ class named_entity_filter(PmkSeed.Seed):
             self.cache = []
 
     def run(self, pkt, tweet):
-        tweet = cPickle.loads(tweet)
+        tweet = cPickle.loads(str(tweet))
         for t in tweet:
             m = re.search('W(\s+)(.*)(\n)', t, re.S)
             if m:

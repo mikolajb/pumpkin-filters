@@ -83,7 +83,7 @@ class topic_filter(PmkSeed.Seed):
             self.cache = []
 
     def run(self, pkt, tweet):
-        tweet = cPickle.loads(tweet)
+        tweet = cPickle.loads(str(tweet))
         for t in tweet:
             m = re.search('W(\s+)(.*)(\n)', t, re.S)
             if m:

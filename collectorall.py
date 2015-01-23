@@ -42,7 +42,7 @@ class collectorall(PmkSeed.Seed):
         self.stats = open("stats.txt", "w+")
 
     def run(self, pkt, tweet):
-        tweet = cPickle.loads(tweet)
+        tweet = cPickle.loads(str(tweet))
         self.stats.write(strftime("%a, %d %b %Y %H:%M:%S +0000\n", gmtime()))
         self.stats.flush()
         for t in tweet:

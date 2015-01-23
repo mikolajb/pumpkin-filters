@@ -29,6 +29,7 @@
 
 import re, os, time, cPickle
 import urllib2
+import nltk
 from random import randint
 from pumpkin import PmkSeed
 from nltk import wordpunct_tokenize
@@ -43,6 +44,8 @@ class language_filter(PmkSeed.Seed):
 
     def on_load(self):
         print "Loading: " + self.__class__.__name__
+	wd = self.context.getWorkingDir()
+        nltk.data.path.append(wd + "nltk_data")
 
     def detect_language(self, text):
 
@@ -67,7 +70,7 @@ class language_filter(PmkSeed.Seed):
             self.cache = []
 
     def run(self, pkt, tweet):
-        tweet = cPickle.loads(tweet)
+        tweet = cPickle.loads(str(tweet))
         for t in tweet:
             m = re.search('W(\s+)(.*)(\n)', t, re.S)
             if m:
