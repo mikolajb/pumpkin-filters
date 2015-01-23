@@ -97,7 +97,7 @@ class sentiment_analyses(PmkSeed.Seed):
 
     def process_message(self, pkt, message, category):
         self.cache.append(message)
-        if len(self.cache) > 10:
+        if len(self.cache) > 2000:
             self.dispatch(pkt, cPickle.dumps(self.cache), category)
             self.cache = []
 

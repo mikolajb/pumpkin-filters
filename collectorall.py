@@ -47,4 +47,3 @@ class collectorall(PmkSeed.Seed):
         self.stats.flush()
         for t in tweet:
             self.logger.info("collector: " + t)
-

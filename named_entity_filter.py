@@ -59,7 +59,7 @@ class named_entity_filter(PmkSeed.Seed):
 
     def process_message(self, pkt, message, category):
         self.cache.append(message)
-        if len(self.cache) > 10:
+        if len(self.cache) > 2000:
             self.dispatch(pkt, cPickle.dumps(self.cache), category)
             self.cache = []
 
@@ -72,6 +72,6 @@ class named_entity_filter(PmkSeed.Seed):
                 self.logger.info("named_entity_filter: " + tw)
                 entities = self.extract_named_entities(tw)
                 if len(entities) > 0:
-                    self.logger.info("named_entity_filter: |" + "| ".join(entities))
+                    # self.logger.info("named_entity_filter: |" + "| ".join(entities))
                     self.process_message(pkt, ", ".join(entities), 'ENTITIES')
 
