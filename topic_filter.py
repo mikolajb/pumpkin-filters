@@ -78,7 +78,8 @@ class topic_filter(PmkSeed.Seed):
 
     def process_message(self, pkt, message, category):
         self.cache.append(message)
-        if len(self.cache) > 2000:
+        #if len(self.cache) > 2000:
+        if len(self.cache) > 0:
             self.dispatch(pkt, cPickle.dumps(self.cache), category)
             self.cache = []
 
